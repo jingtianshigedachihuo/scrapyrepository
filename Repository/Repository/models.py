@@ -7,4 +7,11 @@ Base = declarative_base()
 
 class Repository(Base):
     __tablename__ = 'repositories'
-
+    id = Column(Integer, primary_key=True)
+    name = Column(String(64))
+    update_time = Column(DateTime)
+    commits = Column(Integer)
+    branches = Column(Integer)
+    releases = Column(Integer)
+if __name__ == "__main__":
+    Base.metadata.create_all(engine)

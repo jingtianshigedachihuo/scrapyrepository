@@ -13,16 +13,17 @@ class CoursesSpider(scrapy.Spider):
         return (urls_tmpl.format(i) for i in range(1, 5))
     def parse(self, response):
         for course in response.css('li.col-12'):
-            item = repositoryItem()
+            item = RepositoryItem()
             item['name'] = course.css('a::text').extract_first().strip()
             item['update_time'] = course.css('relative-time::attr(datetime)').extract_first().strip()
             course_url = response.urljoin(course.css('a::attr(href)').extract_first())
-            request = scrapy.Request(course_url, callback=self.parse_author)            request.meta['item'] = item
+            request = scrapy.Request(course_url, callback=self.parse_author) 
+            request.meta['item'] = item
             yield request
 
     def parse_author(self, response):
         item = response.meta['item']
-        item['commits'] = response.xpath('(//span[@class="num text-emphasized"])[1]/text()').extract_first().extract_first() 
-        item['branches'] = response.xpath('(//span[@class="num text-emphasized"])[2]/text()').extract_first()
-        item['releases'] = response.xpath('(//span[@class="num text-emphasized"])[3]/text()').extract_first()
+        item['commits'] = response.xpath('(//span[@class="num text-emphasized"])[1]/text()').extract_first().strip()
+        item['branches'] = response.xpath('(//span[@class="num text-emphasized"])[2]/text()').extract_first().strip()
+        item['releases'] = response.xpath('(//span[@class="num text-emphasized"])[3]/text()').extract_first().strip()
         yield item
